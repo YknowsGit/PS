@@ -1,0 +1,42 @@
+// 01타일
+package Random._2025.Random1Day5M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Q1904 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        int[] arr = new int[n+2];
+        arr[1] = 1;
+        arr[2] = 2;
+        for (int i = 3; i <= n; i++) {
+            arr[i] = (arr[i - 1] + arr[i - 2]) % 15746;
+        }
+
+        int result = arr[n];
+        System.out.println(result);
+    }
+}
+
+/*
+n = 1
+1 => 1개
+n = 2
+[1,1], [00] => 2개
+n = 3
+[00,1], [1,00], [1,1,1] => 3개
+n = 4
+[00,00], [00,11], [11,00], [1,00,1], [1,1,1,1] => 5개
+n = 5
+[00,1,1,1], [1,00,1,1], [1,1,00,1], [1,1,1,00],
+ [00,1,00], [00,00,1], [1,00,00], [1,1,1,1,1] => 8개
+
+점화식
+f(n) = f(n-1) + f(n-2)
+
+ */
