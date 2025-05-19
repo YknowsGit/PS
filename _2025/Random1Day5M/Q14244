@@ -1,0 +1,32 @@
+// 트리 만들기
+package Random._2025.Random1Day5M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14244 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        // 트리의 간선 정보 출력(트리의 정점은 0~ n-1)
+        for (int i = 0; i < n - 1; i++) {
+
+            if (i <= n - m) {
+                System.out.print(i + " ");
+                System.out.println(i + 1);
+            } else {
+                System.out.print(n-m + " ");
+                System.out.println(i + 1);
+            }
+
+        }
+    }
+}
+// 스페셜 져지 유의!
