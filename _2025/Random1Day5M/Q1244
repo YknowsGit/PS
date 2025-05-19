@@ -1,0 +1,68 @@
+// 스위치 켜고 끄기
+package Random._2025.Random1Day5M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q1244 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int[] arr = new int[n+1];
+        for (int i = 1; i <= n; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int s = Integer.parseInt(br.readLine());
+        for (int i = 0; i < s; i++) {
+            StringTokenizer st1 = new StringTokenizer(br.readLine());
+            int gender = Integer.parseInt(st1.nextToken());
+            int number = Integer.parseInt(st1.nextToken());
+
+            if(gender == 1) { // 남자라면,
+                for (int j = number; j <= n; j += number) {
+                    if(arr[j] == 0) {
+                        arr[j] = 1;
+                    } else {
+                        arr[j] = 0;
+                    }
+                }
+            } else { // 여자라면,
+                int left = number - 1;
+                int right = number + 1;
+                while (left >= 1 && right <= n && arr[left] == arr[right]) {
+                    left--;
+                    right++;
+                }
+                for (int j = left + 1; j <= right - 1; j++) {
+                    if(arr[j] == 0) {
+                        arr[j] = 1;
+                    } else {
+                        arr[j] = 0;
+                    }
+                }
+            }
+
+        }
+
+        for (int i = 1; i <= n; i++) {
+            System.out.print(arr[i] + " ");
+            if (i % 20 == 0) {
+
+// 출력형식 주의
+                System.out.println();
+            }
+        }
+    }
+
+}
+// 0 1 0 1 0 0 0 1
+
+// 0 1 1 1 0 1 0 1
+
+// 1 0 0 0 1 1 0 1
