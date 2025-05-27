@@ -1,0 +1,88 @@
+// 연산자 끼워넣기
+package Random._2025.Random1Day5M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14888 {
+
+    static int max = Integer.MIN_VALUE;
+    static int min = Integer.MAX_VALUE;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        int[] arr = new int[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int[] op = new int[4];
+        StringTokenizer st1 = new StringTokenizer(br.readLine());
+        for (int i = 0; i < 4; i++) {
+            op[i] = Integer.parseInt(st1.nextToken());
+        }
+
+        dfs(arr, arr[0], op, 1);
+
+        System.out.println(max);
+        System.out.println(min);
+
+    }
+
+    public static void dfs(int[] arr, int current, int[] op, int count) {
+
+        if(count == arr.length) {
+            max = Math.max(max, current);
+            min = Math.min(min, current);
+            return;
+        }
+
+        if(op[0] > 0) {
+            op[0]--;
+            dfs(arr, current + arr[count], op, count + 1);
+            op[0]++;
+        }
+
+        if(op[1] > 0) {
+            op[1]--;
+            dfs(arr, current - arr[count], op, count + 1);
+            op[1]++;
+        }
+
+        if(op[2] > 0) {
+            op[2]--;
+            dfs(arr, current * arr[count], op, count + 1);
+            op[2]++;
+        }
+
+        if(op[3] > 0) {
+            op[3]--;
+            int next;
+            if(current < 0) {
+                next = -(-current / arr[count]);
+            } else {
+                next = current / arr[count];
+            }
+            dfs(arr, next, op, count + 1);
+            op[3]++;
+        }
+
+    }
+
+}
+/*
+연산자 op[i]를 어떻게 배치할건지?
+
+최대 최소 갱신, 변수 선언 주의
+
+dfs 변수 설정?
+
+dfs 종료 조건?
+
+※ 나눗셈 연산 시 주의
+ */
