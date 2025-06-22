@@ -1,0 +1,48 @@
+package Random._2025.Random1Day6M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q1049 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int sum = 0;
+        int cntSet = n / 6;
+        int cntEach = n % 6;
+        int minSet = Integer.MAX_VALUE;
+        int minEach = Integer.MAX_VALUE;
+        int resultEach = 0, resultSet = 0, result = 0;
+        for (int i = 0; i < m; i++) {
+            StringTokenizer st1 = new StringTokenizer(br.readLine());
+            int set = Integer.parseInt(st1.nextToken());
+            int each = Integer.parseInt(st1.nextToken());
+            minSet = Math.min(minSet, set);
+            minEach = Math.min(minEach, each);
+        }
+
+        resultEach = n * minEach; // 전부 Each로 만 샀을 경우
+        resultSet = ((n/6) + 1) * minSet; // 전부 Set로 만 샀을 경우
+        result = (cntSet * minSet) + (cntEach * minEach); // Set & Each
+        int minResult = resultEach;
+        minResult = Math.min(minResult, resultSet);
+        minResult = Math.min(minResult, result);
+
+        System.out.println(minResult);
+    }
+}
+/*
+1set = 낱개 6
+n / 6 => set: set 비용 중 가장 낮은거
+n % 6 => 낱개: 낱개 비용 중 가장 낮은거
+
+★주의★
+세트로만 사는게 더 적은 비용일수 있음
+=> resultSet = ((n/6) + 1) * minSet;
+ */
