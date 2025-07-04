@@ -1,0 +1,132 @@
+// 꽃길
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14620 {
+
+    static int n;
+    static int[][] arr = new int[200][200];
+    static boolean[][] visited = new boolean[10][10];
+    static int[] dx = {0, 0, 1, -1};
+    static int[] dy = {1, -1, 0, 0};
+    static int result = Integer.MAX_VALUE; // 꽃 비용들의 최소 값
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < n; j++) {
+                arr[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        dfs(0, 0);
+        System.out.println(result);
+    }
+
+    public static void dfs(int count, int cost) {
+
+        if (count == 3) {
+            result = Math.min(result, cost);
+            return;
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                // 이 칸을 중심으로 꽃 심을 수 있으면(범위를 벗어나지 않거나, 방문하지 않았다면)
+                if (i-1 >= 0 && i+1 <= n-1 && j-1 >= 0 && j+1 <= n-1 && !visited[i][j]
+                        && !visited[i-1][j] &&!visited[i][j-1] && !visited[i+1][j] && !visited[i][j+1]) {
+
+                    visited[i][j] = true;
+                    int tempCost = arr[i][j];
+                    for (int dir = 0; dir < 4; dir++) {
+                        int nx = i + dx[dir];
+                        int ny = j + dy[dir];
+                        visited[nx][ny] = true;
+                        tempCost += arr[nx][ny];
+                    }
+
+                    dfs(count + 1, cost+tempCost);
+
+                    visited[i][j] = false;
+                    for (int dir = 0; dir < 4; dir++) {
+                        int nx = i + dx[dir];
+                        int ny = j + dy[dir];
+                        visited[nx][ny] = false;
+                    }
+                }
+            }
+        }
+
+    }
+}
+/*
+6
+1  0  2  3  3  4
+1  1  1  1  1  1
+0  0  1  1  1  1
+3  9  9  0  1  99
+9  11  3  1  0  3
+12  3  0  0  0  1
+
+=> 12
+3(1, 1) +
+4(4, 3) +
+5(2, 4)
+ */
+
+/*
+for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+        // 이 칸을 중심으로 꽃 심을 수 있으면
+        if (i-1 >= 0 && i+1 <= n-1 && j-1 >= 0 && j+1 <= n-1 && !visited[i][j]
+                && !visited[i-1][j] &&!visited[i][j-1] && !visited[i+1][j] && !visited[i][j+1]) {
+
+            visited[i][j] = true;
+            cost += arr[i][j];
+            for (int dir = 0; dir < 4; dir++) {
+                int nx = i + dx[dir];
+                int ny = j + dy[dir];
+                visited[nx][ny] = true;
+                cost += arr[nx][ny];
+            }
+
+            dfs(count + 1, cost);
+
+            visited[i][j] = false;
+            for (int dir = 0; dir < 4; dir++) {
+                int nx = i + dx[dir];
+                int ny = j + dy[dir];
+                visited[nx][ny] = false;
+            }
+        }
+    }
+}
+
+※ 위 코드로 인해 cost의 값이 정상적으로 출력되지 않는 상황을 겪음 ※
+=> DFS는 모든 가능한 조합을 탐색하는 알고리즘,
+=> cost가 이전 탐색 결과에 영향을 받으면,
+=> 다음 탐색은 순수하지 않은 잘못된 비용을 기반으로 진행,
+=> 따라서 원래 상태로 돌아가야만 정확한 조합 비교 가능
+
+DFS/백트래킹에서 누적값 다룰 때 원칙 3가지
+1. 변수를 직접 변경하지 말고, 인자로 넘길 것.
+- X: cost += ... <- 직접 누적은 원복이 어렵고, 다른 조합에 영향을 미침.
+- O: dfs(count + 1, cost + tempCost) <- 원래 cost는 건들지 않음.
+
+2. 상태 변경이 필요하면, 반드시 되돌릴 것.
+- visited[i][j] = true; -> 사용 후,
+- visited[i][j] = false; -> 원래 상태로 복우너
+
+3. 임시 변수(temp)를 적극 활용 할 것.
+- int tempCost = ...;
+- 임시 계산 -> 인자로 넘김 -> 끝난 뒤 따로 처리 X
+
+=> ★ 원본 변수는 지키고, 변화는 temp로 처리하자.
+ */
