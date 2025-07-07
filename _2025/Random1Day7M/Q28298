@@ -1,0 +1,78 @@
+// 더 흔한 타일 색칠 문제
+package Random._2025.Random1Day7M;
+
+import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q28298 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
+        char[][] arr = new char[n][m];
+
+        for (int i = 0; i < n; i++) {
+            String str = br.readLine();
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = str.charAt(j);
+            }
+        }
+
+        char[][] pattern = new char[k][k];
+
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < k; j++) {
+                int[] alphabet = new int[26];
+
+                for (int x = 0; x < n; x += k) {
+                    for (int y = 0; y < m; y += k) {
+                        alphabet[arr[i + x][j + y] - 'A']++;
+                    }
+                }
+
+                int maxCount = 0;
+                char selectAlp = 'A';
+                for (int l = 0; l < 26; l++) {
+                    if(alphabet[l] > maxCount) {
+                        maxCount = alphabet[l];
+                        selectAlp = (char) (l + 'A');
+                    }
+                }
+
+                pattern[i][j] = selectAlp;
+            }
+        }
+
+        char[][] result = new char[n][m];
+        int resultCount = 0;
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < k; j++) {
+
+                for (int x = 0; x < n; x+=k) {
+                    for (int y = 0; y < n; y+=k) {
+                        char map = arr[i + x][j + y];
+                        char changeMap = pattern[i][j];
+
+                        if (map != changeMap) {
+                            resultCount++;
+                        }
+                        result[i + x][j + y] = changeMap;
+                    }
+                }
+            }
+        }
+
+        System.out.println(resultCount);
+        for (int i = 0; i < n; i++) {
+            System.out.println(result[i]);
+        }
+
+    }
+}
