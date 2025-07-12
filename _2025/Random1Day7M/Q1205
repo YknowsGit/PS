@@ -1,0 +1,90 @@
+// 등수 구하기
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q1205 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        // n = 0 일 경우 애초에 rankigList 입력을 받으면 안됨
+        // => NullPointerException 예외 터짐!
+        int n = Integer.parseInt(st.nextToken());
+        if (n == 0) {
+            System.out.println(1);
+            return;
+        }
+
+        int newScore = Integer.parseInt(st.nextToken());
+        int p = Integer.parseInt(st.nextToken());
+        int[] rankingList = new int[n];
+        StringTokenizer st1 = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) {
+            rankingList[i] = Integer.parseInt(st1.nextToken());
+        }
+        /*
+        3 90 10
+        100 90 80
+         */
+        int rank = 0; // rank = 밀린 횟수
+        for (int i = 0; i < n; i++) {
+            if (rankingList[i] > newScore) {
+                rank++; // 내 점수보다 크니까 밀림.
+            } else if (rankingList[i] == newScore) {
+                break; // 내 점수랑 동일하니까 그 자리에 들어갈 수 있음. 멈춤
+            } else {
+                break; // 내 점수가 더 크니까 그 자리에 들어갈 수 있음. 멈춤
+            }
+        }
+
+        if (n == p && newScore <= rankingList[n - 1]) { // n == p일때, 밀린 횟수가 p보다 크거나 같으면 rankingList  못들어간다.
+            System.out.println(-1);
+        } else {                   // 나머지 경우 일때는 들어갈 수 있음 밀린 횟수 + 1
+            System.out.println(rank + 1);
+        }
+
+    }
+}
+/*
+예제 입력 1
+3 90 10
+100 90 80
+arr[0] arr[1] arr[2]
+
+만일, arr의 갯수(n)가 p보다 작을경우! => 리스트에 항상 빈자리가 있는 경우
+arr[i] 랑 비교해서 newScore가 더 크면
+newScore == arr[i], 기존의 arr[i] == arr[i+1]
+100 90 90 80
+arr[0] arr[1] arr[2] arr[3]
+
+예제 입력 2
+10 1 10
+10 9 8 7 6 5 4 3 2 1
+arr[0] arr[1] ... arr[9]
+
+만일, arr의 갯수(=n)가 p랑 비교해서 같을때
+newScore와 arr[i] 랑 비교해서
+newScore값이 arr[i]보다 큰값이 없고 작거나 같은 값만 있을때
+-1 출력!
+
+예제 입력 3
+10 1 10
+10 9 8 7 6 5 4 3 3 0
+
+만일, arr의 갯수(=n)가 p랑 비교해서 같을때
+newScore와 arr[i] 랑 비교해서
+newScore값이 arr[i]보다 큰값이 있을 때
+newScore == arr[i], 기존의 arr[i] == arr[i+1]
+
+예제 입력 4
+0 0 50
+n=0 일때
+당여히 arr[i]는 아무것도 없으니까
+1 출력!
+
+ */
