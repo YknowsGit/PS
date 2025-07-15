@@ -1,0 +1,92 @@
+// 킹
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q1063 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        String king = st.nextToken(); // A1
+        String rock = st.nextToken(); // A2
+        int n = Integer.parseInt(st.nextToken());
+
+        // 좌표
+        int kingIX = king.charAt(1) - '0';              // 행 1
+        int kingIY = king.charAt(0) - 'A' + 1;          // 열 A=1
+        int rockIX = rock.charAt(1) - '0';              // 행 2
+        int rockIY = rock.charAt(0) - 'A' + 1;          // 열 A=1
+
+        int[] dx = {0, 0, -1, 1,  1, 1, -1, -1}; // 행 1~ 8
+        int[] dy = {1, -1, 0, 0,  1, -1, 1, -1}; // 열 a~ h
+        // 우, 좌, 아래, 위, 우상, 좌상, 우하, 좌하
+        int dir=0;
+
+        for (int i = 0; i < n; i++) {
+            String howMove = br.readLine();
+            // B, L, LB, RB, LT
+            if (howMove.equals("R")) {
+                dir=0;
+            } else if (howMove.equals("L")) {
+                dir=1;
+            } else if (howMove.equals("B")) {
+                dir=2;
+            } else if (howMove.equals("T")) {
+                dir=3;
+            } else if (howMove.equals("RT")) {
+                dir=4;
+            } else if (howMove.equals("LT")) {
+                dir=5;
+            } else if (howMove.equals("RB")) {
+                dir=6;
+            } else if (howMove.equals("LB")) {
+                dir=7;
+            }
+
+            int king_nx = kingIX + dx[dir];
+            int king_ny = kingIY + dy[dir];
+
+            if (king_nx < 1 || king_nx > 8 || king_ny < 1 || king_ny > 8) {
+                continue;
+            }
+
+            if (king_nx == rockIX && king_ny == rockIY) {
+                int rock_nx = rockIX + dx[dir];
+                int rock_ny = rockIY + dy[dir];
+
+                if (rock_nx < 1 || rock_nx > 8 || rock_ny < 1 || rock_ny > 8) {
+                    continue;
+                }
+
+                rockIX = rock_nx;
+                rockIY = rock_ny;
+            }
+
+            kingIX = king_nx;
+            kingIY = king_ny;
+        }
+
+        System.out.println((char)(kingIY + 'A' - 1) +""+ kingIX);
+        System.out.println((char)(rockIY + 'A' - 1) +""+ rockIX);
+    }
+}
+/*
+※ 실수 주의 ※
+int kingX = command[0].charAt(1); // 행: 1
+=> 문자 아스키코드값이 들어간 '1'
+=> 결국 숫자로 49가 됨
+ */
+/*
+1. 킹 이동할 좌표 계산 => king_nx, king_ny
+2. 킹 다음 좌표가 체스판 밖이면 => continue
+3. if. 킹이 돌과 같은 위치로 가려 하면
+   3-1. 돌 이동할 좌표 계산 => rock_nx, rock_ny
+   3-2. 돌 다음 위치가 체스판 밖이면 => continue
+   3-3. 돌 위치 갱신
+4. 킹 위치 갱신
+ */
