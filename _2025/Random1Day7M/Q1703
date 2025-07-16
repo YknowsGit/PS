@@ -1,0 +1,84 @@
+// [빡구현 100선] - 생장점
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q1703 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        while (true) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            if (a == 0) break;
+
+            int[] sf = new int[a];
+            int[] cut = new int[a];
+            for (int i = 0; i < a; i++) {
+                sf[i] = Integer.parseInt(st.nextToken());
+                cut[i] = Integer.parseInt(st.nextToken());
+            }
+
+            int total = 1;
+            int cutting = 0;
+
+            for (int i = 0; i < a; i++) {
+                total *= sf[i];
+
+                int multiply = 1;
+
+                for (int j = i+1; j <= a-1; j++) {
+                    multiply *= sf[j];
+                }
+
+                cutting += cut[i] * multiply;
+            }
+
+            int result = total - cutting;
+            System.out.println(result);
+        }
+
+    }
+}
+/* 4 5 0 5 1 5 2 5 101
+a = 4
+sf[0]=5, cut[0]=0
+sf[1]=5, cut[1]=1
+sf[2]=5, cut[2]=2
+sf[3]=5, cut[3]=101
+
+total(온전한 총 나뭇가지 수) = sf[0]*sf[1]*sf[2]*sf[3] = 625
+cutting(잘른 총 나뭇가지 수) = cut[1]*sf[2]*sf[3] + 25
+                             cut[2]*sf[3] + = 10
+                              cut[3]*1 = 101
+                          = 136
+result = total - cutting = 625 - 136 = 489
+ */
+/*
+public class Q1703 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        while (true) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            if (a == 0) break;
+
+            int branch = 1; // 초기 생장점 1개
+
+            for (int i = 0; i < a; i++) {
+                int sf = Integer.parseInt(st.nextToken());
+                int cut = Integer.parseInt(st.nextToken());
+                branch = branch * sf - cut;  // ★ 생장점 * sf 후 cut 제거
+            }
+
+            System.out.println(branch); // 결과 출력
+        }
+    }
+}
+ */
