@@ -1,0 +1,141 @@
+// [빡구현 100선] - 팀 이름 정하기
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
+public class Q1296 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String yeondo = br.readLine();
+        int n = Integer.parseInt(br.readLine());
+        String[] team = new String[n];
+        for (int i = 0; i < n; i++) {
+            team[i] = br.readLine();
+        }
+
+        int countL = 0;
+        int countO = 0;
+        int countV = 0;
+        int countE = 0;
+        for (int i = 0; i < yeondo.length(); i++) {
+            if (yeondo.charAt(i) == 'L') {
+                countL++;
+            } else if (yeondo.charAt(i) == 'O') {
+                countO++;
+            } else if (yeondo.charAt(i) == 'V') {
+                countV++;
+            } else if (yeondo.charAt(i) == 'E') {
+                countE++;
+            }
+        }
+
+        // ★ for 문 들어가기 전에 team 문자열을 사전순 정렬
+        Arrays.sort(team);
+
+        int result = 0;
+        int max = Integer.MIN_VALUE;
+        String winner = "";
+        for (int i = 0; i < n; i++) {
+            int L = countL;
+            int O = countO;
+            int V = countV;
+            int E = countE;
+
+            for (int j = 0; j < team[i].length(); j++) {
+                if (team[i].charAt(j) == 'L') {
+                    L++;
+                } else if (team[i].charAt(j) == 'O') {
+                    O++;
+                } else if (team[i].charAt(j) == 'V') {
+                    V++;
+                } else if (team[i].charAt(j) == 'E') {
+                    E++;
+                }
+            }
+
+            result = ((L+O) * (L+V) * (L+E) * (O+V) * (O+E) * (V+E)) % 100;
+            if (result > max) {
+                max = result;
+                winner = team[i];
+            }
+        }
+
+        System.out.println(winner);
+    }
+}
+/*
+result 값이 높은 팀이 우승
+★ result 값이 동일할 경우 사전 순으로 앞서는 팀이 우승
+ */
+/*
+문자열 사전 순 비교는 compareTo
+compareTo 반환값은 -1, 0, 1
+ */
+/*
+public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String yendo = br.readLine(); // LOVE
+        int n = Integer.parseInt(br.readLine());
+        String[] team = new String[n];
+        for (int i = 0; i < n; i++) {
+            team[i] = br.readLine(); // JACOB, FRANK, DANO
+        }
+
+        int countL = 0;
+        int countO = 0;
+        int countV = 0;
+        int countE = 0;
+        for (int i = 0; i < yendo.length(); i++) {
+            if (yendo.charAt(i) == 'L') {
+                countL++;
+            } else if (yendo.charAt(i) == 'O') {
+                countO++;
+            } else if (yendo.charAt(i) == 'V') {
+                countV++;
+            } else if (yendo.charAt(i) == 'E') {
+                countE++;
+            }
+        }
+
+        int max = Integer.MIN_VALUE;
+        int result = 0;
+        String winner= "";
+        for (int i = 0; i < n; i++) {
+            int L = countL;
+            int O = countO;
+            int V = countV;
+            int E = countE;
+            for (int j = 0; j < team[i].length(); j++) {
+                if (team[i].charAt(j) == 'L') {
+                    L++;
+                } else if (team[i].charAt(j) == 'O') {
+                    O++;
+                } else if (team[i].charAt(j) == 'V') {
+                    V++;
+                } else if (team[i].charAt(j) == 'E') {
+                    E++;
+                }
+            }
+
+            result = ((L+O) * (L+V) * (L+E) * (O+V) * (O+E) * (V+E)) % 100;
+            if (result > max) {
+                max = result;
+                winner = team[i];
+            } else if (result == max) {
+                // 사전 순 비교!!
+                if (team[i].compareTo(winner) < 0) {
+                    // ★ compareTo 비교시 결과가 -1 일때 team[i] 가 사전순으로 더 높음
+                    winner = team[i];
+                }
+            }
+        }
+
+        System.out.println(winner);
+    }
+ */
