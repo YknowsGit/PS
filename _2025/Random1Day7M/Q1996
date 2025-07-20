@@ -1,0 +1,142 @@
+// [빡구현 100선] - 지뢰 찾기
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Q1996 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        String[] map = new String[n];
+        for (int i = 0; i < n; i++) {
+            map[i] = br.readLine();
+        }
+
+        int[][] result= new int[n][n];
+        int[] dx = {-1, 1, 0, 0, -1, -1, 1, 1};
+        int[] dy = {0, 0, -1, 1, -1, 1, 1, -1};
+        // 상 하 좌 우 좌상 우상 우하 좌하
+
+        for (int i = 0; i < n; i++) {
+            // 각 행을 돌아 총 5개의 문자열
+            for (int j = 0; j < n; j++) {
+                // 각 행의 열을 돌아 총 5개의 문자
+                if (!(map[i].charAt(j) == '.')) {
+                    // 숫자인 경우
+                    for (int dir = 0; dir < 8; dir++) {
+                        int nx = i + dx[dir];
+                        int ny = j + dy[dir];
+
+                        if (nx < 0 || nx > n - 1 || ny < 0 || ny > n - 1) {
+                            // 대신 범위를 벗어나면 수행 안함
+                            continue;
+                        }
+
+                        int num = map[i].charAt(j) - '0';
+                        result[nx][ny] += num;
+                    }
+
+                }
+
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!(map[i].charAt(j) == '.')) {
+                    System.out.print("*");
+                } else if (result[i][j] > 9) {
+                    System.out.print("M");
+                } else {
+                    System.out.print(result[i][j]);
+                }
+            }
+            System.out.println();
+        }
+
+    }
+}
+/*
+// 상하좌우대각선 위치에 그 숫자만큼 값을 누적하여 더함
+// 대신 범위를 벗어나면 수행 안함 && 상하좌우에 숫자가 있어도 수행 안함
+// i < 0 || i > n - 1 || j < 0 || j > n - 1
+// map[i].chartAt(j) != '.'
+// 계속 수행하다가
+
+// 누적된 값이 9를 초과하면 그 위치에 M을 출력함
+// 수행 완료하면 result[][] 에 넣음
+ */
+/*
+출력 시
+// 10 이상이면 "M"
+// 1 ~9 이면 숫자
+// 지뢰 칸이면 "*"
+ */
+/*
+★ 개선 코드 ★ 
+// [빡구현 100선] - 지뢰 찾기
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Q1996 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+
+        // => "map을 2차원 char 배열로 선언"
+        char[][] map = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            String line = br.readLine();
+            for (int j = 0; j < n; j++) {
+                map[i][j] = line.charAt(j);
+            }
+        }
+
+        int[][] result = new int[n][n];
+        int[] dx = {-1, 1, 0, 0, -1, -1, 1, 1};
+        int[] dy = {0, 0, -1, 1, -1, 1, 1, -1};
+        // 상 하 좌 우 좌상 우상 우하 좌하
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (map[i][j] != '.') { // => 불필요한 charAt 제거
+                    int num = map[i][j] - '0';
+                    for (int dir = 0; dir < 8; dir++) {
+                        int nx = i + dx[dir];
+                        int ny = j + dy[dir];
+
+                        if (nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
+                        if (map[nx][ny] != '.') continue;
+
+                        result[nx][ny] += num;
+                    }
+                }
+            }
+        }
+
+        // 출력
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (map[i][j] != '.') {
+                    System.out.print('*');
+                } else if (result[i][j] > 9) {
+                    System.out.print('M');
+                } else {
+                    System.out.print(result[i][j]);
+                }
+            }
+            System.out.println();
+        }
+
+    }
+}
+ */
