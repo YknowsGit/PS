@@ -1,0 +1,28 @@
+// [빡구현 100선] - 폴리오미노
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Q1343 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String str = br.readLine();
+        for (int i = 0; i < str.length(); i++) {
+            if (str.contains("XXXX")) {
+                str = str.replaceAll("XXXX", "AAAA");
+            } else if (str.contains("XX")) {
+                str = str.replaceAll("XX", "BB");
+            }
+        }
+
+        if (str.contains("X")) {
+            System.out.println(-1);
+        } else {
+            System.out.println(str);
+        }
+    }
+}
