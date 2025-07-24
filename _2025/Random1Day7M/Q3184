@@ -1,0 +1,92 @@
+// 양
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Q3184 {
+
+    static class Pair {
+        int x, y;
+
+        public Pair(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static Character[][] board = new Character[252][252];
+    static boolean[][] vis = new boolean[252][252];
+    static int[] dx = {-1, 1, 0, 0};
+    static int[] dy = {0, 0, -1, 1};
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int r = Integer.parseInt(st.nextToken());
+        int c = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < r; i++) {
+            String str = br.readLine();
+            for (int j = 0; j < c; j++) {
+                board[i][j] = str.charAt(j);
+            }
+        }
+
+        int yangg = 0;
+        int wolff = 0;
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                int yang = 0;
+                int wolf = 0;
+                if (board[i][j] == '#' || vis[i][j]) continue;
+
+                vis[i][j] = true;
+
+                if (board[i][j] == 'o') {
+                    yang++;
+                } else if (board[i][j] == 'v') {
+                    wolf++;
+                }
+
+                Queue<Pair> q = new LinkedList<>();
+                Pair pair = new Pair(i, j);
+                q.add(pair);
+
+                while(!q.isEmpty()) {
+
+                    Pair cur = q.poll();
+                    for (int dir = 0; dir < 4; dir++) {
+                        int nx = cur.x + dx[dir];
+                        int ny = cur.y + dy[dir];
+
+                        if (nx < 0 || nx >= r || ny < 0 || ny >= c) continue;
+                        if (board[nx][ny] == '#' || vis[nx][ny]) continue;
+
+                        vis[nx][ny] = true;
+                        if (board[nx][ny] == 'o') {
+                            yang++;
+                        } else if (board[nx][ny] == 'v') {
+                            wolf++;
+                        }
+
+                        Pair next = new Pair(nx, ny);
+                        q.add(next);
+                    }
+                }
+
+                if (yang > wolf) {
+                    yangg += yang;
+                } else {
+                    wolff += wolf;
+                }
+            }
+        }
+
+        System.out.println(yangg + " " + wolff);
+    }
+}
