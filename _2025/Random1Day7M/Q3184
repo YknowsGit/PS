@@ -90,3 +90,25 @@ public class Q3184 {
         System.out.println(yangg + " " + wolff);
     }
 }
+/*
+// bfs 시작 위치 체크
+if (board[i][j] == 'o') {
+    yang++;
+} else if (board[i][j] == 'v') {
+    wolf++;
+}
+
+// bfs 안에서 탐색하면서 카운트
+if (board[nx][ny] == 'o') {
+    yang++;
+} else if (board[nx][ny] == 'v') {
+    wolf++;
+}
+
+// bfs 종료 후에 비교
+if (yang > wolf) {
+    yangg += yang;
+} else {
+    wolff += wolf;
+}
+ */
