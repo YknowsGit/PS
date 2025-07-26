@@ -1,0 +1,62 @@
+// [빡구현 100선] - 해변
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14397 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        Character[][] board = new Character[50][50];
+        for (int i = 0; i < n; i++) {
+            String str = br.readLine();
+            for (int j = 0; j < m; j++) {
+                board[i][j] = str.charAt(j);
+            }
+        }
+
+        int[] even_dx = {0, 0, -1, -1, 1, 1};
+        int[] even_dy = {-1, 1, -1, 0, -1, 0};
+        // 짝수 행: 좌, 우, 좌상, 우상, 좌하, 우하
+        // => 우상, 우하 일때, 같은 열
+        int[] odd_dx = {0, 0, -1, -1, 1, 1};
+        int[] odd_dy = {-1, 1, 0, 1, 0, 1};
+        // 홀수 행: 좌, 우, 좌상, 우상, 좌하, 우하
+        // => 좌상, 좌하 일때, 같은 열
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (board[i][j] == '#') {
+                    for (int dir = 0; dir < 6; dir++) {
+                        int nx;
+                        int ny;
+                        if (i % 2 == 0) {
+                            nx = i + even_dx[dir];
+                            ny = j + even_dy[dir];
+                        } else {
+                            nx = i + odd_dx[dir];
+                            ny = j + odd_dy[dir];
+                        }
+
+                        if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+                        if (board[nx][ny] == '.') {
+                            count++;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        System.out.println(count);
+
+    }
+}
