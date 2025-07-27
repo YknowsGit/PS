@@ -1,0 +1,125 @@
+// 숫자판 점프
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Q2210 {
+
+    static class Pair {
+        int x, y;
+
+        public Pair(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static String[][] board = new String[5][5];
+    static int[] dx = {0, 0, 1, -1};
+    static int[] dy = {1, -1, 0, 0};
+    static HashSet<String> set = new HashSet<>();
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        for (int i = 0; i < 5; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < 5; j++) {
+                board[i][j] = st.nextToken();
+            }
+        }
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                Queue<Pair> q = new LinkedList<>();
+                Queue<String> pathQ = new LinkedList<>();
+                Queue<Integer> depthQ = new LinkedList<>();
+
+                q.add(new Pair(i, j));
+                pathQ.add(board[i][j]);
+                depthQ.add(0);
+
+                while (!q.isEmpty()) {
+
+                    Pair cur = q.poll();
+                    String curPath = pathQ.poll();
+                    Integer curDepth = depthQ.poll();
+
+                    if (curDepth == 5) {
+                        set.add(curPath);
+                        continue;
+                    }
+
+                    for (int dir = 0; dir < 4; dir++) {
+                        int nx = cur.x + dx[dir];
+                        int ny = cur.y + dy[dir];
+
+                        if (nx < 0 || nx >= 5 || ny < 0 || ny >= 5) continue;
+
+                        q.add(new Pair(nx, ny));
+                        pathQ.add(curPath + board[nx][ny]);
+                        depthQ.add(curDepth + 1);
+                    }
+                }
+
+            }
+        }
+
+        System.out.println(set.size());
+    }
+
+}
+/*
+DFS 코드 (재귀)
+public class Q2210 {
+
+    static String[][] board = new String[5][5];
+    static int[] dx = {0, 0, 1, -1};
+    static int[] dy = {1, -1, 0, 0};
+    static String cur = "";
+    static HashSet<String> set = new HashSet<>();
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        for (int i = 0; i < 5; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < 5; j++) {
+                board[i][j] = st.nextToken();
+            }
+        }
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                dfs(i, j, board[i][j], 0);
+            }
+        }
+
+        System.out.println(set.size());
+    }
+
+    public static void dfs(int x, int y, String cur, int depth) {
+
+        if (depth == 5) {
+            set.add(cur);
+            return;
+        }
+
+        for (int dir = 0; dir < 4; dir++) {
+            int nx = x + dx[dir];
+            int ny = y + dy[dir];
+
+            if (nx < 0 || nx >= 5 || ny < 0 || ny >= 5) continue;
+
+            dfs(nx, ny, cur + board[nx][ny], depth + 1);
+        }
+    }
+
+}
+ */
