@@ -1,0 +1,84 @@
+// 섬의 개수
+package Random._2025.Random1Day7M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Q4963 {
+
+    static class Pair {
+        int x, y;
+
+        public Pair(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static int[][] board = new int[51][51];
+    static boolean[][] vis = new boolean[51][51];
+    static int[] dx = {0, 0, 1, -1, 1, 1, -1, -1};
+    static int[] dy = {1, -1, 0, 0, 1, -1, -1, 1};
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int w, h;
+
+        while (true) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            w = Integer.parseInt(st.nextToken());
+            h = Integer.parseInt(st.nextToken());
+
+            if (w == 0 && h == 0) break;
+
+            for (int i = 0; i < h; i++) {
+                StringTokenizer st1 = new StringTokenizer(br.readLine());
+                for (int j = 0; j < w; j++) {
+                    board[i][j] = Integer.parseInt(st1.nextToken());
+                    vis[i][j] = false;   // 초기화
+                }
+            }
+
+            int count = 0;
+            for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                    if (board[i][j] == 0 || vis[i][j]) continue;
+
+                    vis[i][j] = true;
+                    count++;
+
+                    Queue<Pair> q = new LinkedList<>();
+                    Pair pair = new Pair(i, j);
+                    q.add(pair);
+
+                    while (!q.isEmpty()) {
+
+                        Pair cur = q.poll();
+                        for (int dir = 0; dir < 8; dir++) {
+                            int nx = cur.x + dx[dir];
+                            int ny = cur.y + dy[dir];
+
+                            if (nx < 0 || nx >= h || ny < 0 || ny >= w) continue;
+                            if (board[nx][ny] == 0 || vis[nx][ny]) continue;
+
+                            vis[nx][ny] = true;
+
+                            Pair next = new Pair(nx, ny);
+                            q.add(next);
+
+                        }
+                    }
+
+                }
+            }
+
+            System.out.println(count);
+        }
+    }
+}
+// ★ vis 초기화 주의
