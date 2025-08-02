@@ -1,0 +1,174 @@
+// [빡구현 100선] - 후보 추천하기
+package Random._2025.Random1Day8M;
+
+import java.io.*;
+import java.util.*;
+
+public class Q1713 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        int m = Integer.parseInt(br.readLine());
+
+        List<Integer> picture = new ArrayList<>();
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < m; i++) {
+            int num = Integer.parseInt(st.nextToken());
+
+            // 추천 받은 학생이 사진틀에 이미 있을 경우
+            if (picture.contains(num)) {
+                map.put(num, map.get(num) + 1);
+            } else {
+            // 없을 경우
+                // 사진틀에 자리가 있는 경우
+                if (picture.size() < n) {
+                    picture.add(num);
+                    map.put(num, 1);
+                } else {
+                // 없을 경우
+                    int minCnt = Integer.MAX_VALUE;
+                    int removeStudent = 0;
+                    for (int j = 0; j < picture.size(); j++) {
+                        int student = picture.get(j); // picture[0], picture[1], picture[2]
+                        int cnt = map.get(student); // map(picture[0], "value 값" = cnt)
+
+                        if (minCnt > cnt) {
+                            minCnt = cnt;
+                            removeStudent = student;
+                        }
+                    }
+
+                    picture.remove((Integer) removeStudent);
+                    map.remove(removeStudent);
+
+                    picture.add(num);
+                    map.put(num, 1);
+                }
+
+            }
+
+        }
+
+        Collections.sort(picture);
+        for (int i = 0; i < picture.size(); i++) {
+            System.out.print(picture.get(i) + " ");
+        }
+    }
+}
+/*
+1. 학생들이 추천 시작 전 모든 사진틀이 비어 있다.
+=> 모든 사진틀 3개
+
+2. 어떤 학생이 특정 학생을 추천하면, 추천 받은 학생의 사진이 반드시 사진틀에 게시
+=> 9번 추천 하는데 2 1 4 3 5 6 2 7 2 이 추천 받음
+
+3. 비어있는 사진틀이 없을 경우
+=> 2 1 4까지 하면 사진틀 꽉참
+현재까지 추천 받은 횟수가 가장 적은 학생의 사진 삭제,
+그 자리에 새롭게 추천받은 학생의 사진 게시
+이때, ★ "현재까지 추천받은 횟수가 가장 적은 학생이 두명 이상일 경우,"
+=> 2 1 4 각각 한명씩임
+그러한 학생들 중 게시된 지 가장 오래된 사진 삭제
+=> 2 1 3 중에 2를 삭제 한다.
+
+4. 현재 사진이 게시된 학생이 다른 학생의 추천을 받을 경우
+=> 2는 총 3번 추천받음
+추천받은 횟수만 증가시킨다.
+=> 2 = count++ 1 -> 2 -> 3번
+
+5. 사진틀에 게시된 사진이 삭제되는 경우
+해당 학생이 추천받은 횟수는 "0"으로 바뀐다.
+
+num =>       2 1 4
+picture[] => 1 1 1
+
+사진틀 꽉 참.
+가장 오래된 2 삭제
+num => 1 4 3
+cnt => 1 1 1
+
+사진틀 꽉 참.
+가장 오래된 1 삭제
+num => 4 3 5
+cnt => 1 1 1
+
+사진틀 꽉 참.
+가장 오래된 4 삭제
+num => 3 5 6
+cnt => 1 1 1
+
+사진틀 꽉 참.
+가장 오래된 3 삭제
+num => 5 6 2
+cnt => 1 1 1
+
+사진틀 꽉 참.
+가장 오래된 5 삭제
+num => 6 2 7
+cnt => 1 1 1
+
+사진틀 꽉 참.
+근데 이미 사진틀에 존재하는 2 들어옴
+num => 6 2 7
+cnt => 1 2 1
+
+cnt 가 큰 순으로 오름 차순으로 정렬
+num => 2 6 7
+cnt => 2 1 1
+
+=> 출력 값 2 6 7
+ */
+/*
+1. 단순 배열
+2. 맵
+3. 큐
+ */
+/*
+for (int j = 0; j < picture.size(); j++) {
+    int student = picture.get(j);
+    int cnt = map.get(student);
+    min = Math.min(min, cnt);
+
+    if (map.get(student) == min) {
+        removeStudent = student;
+    }
+
+}
+=> 이렇게 되면 "가장 최근 학생" 삭제
+=> Math.min 사용하지 말고, 직접 최소값 구하면서
+=> "가장 오래된 학생" 삭제 해야 함.
+ */
+/*
+★ 변수의 생명주기 정확히 감지하고 실수 줄이기
+
+절대 반복문 안에서 매번 새로 선언해서 초기화 되지 않도록...
+방법 3가지
+1. 모든 주요 변수는 블록 바깥에서 먼저 선언하기
+=> 의식적으로 "이 변수들은 계속 사용할꺼니까 반복문 밖에서 선언하자"
+
+2. 이 값은 상태를 기억해야 하나?를 항상 스스로 질문하기
+=> 이 min 값은 한 루프마다 초기화돼야 하나?
+=> 이 cnt 값은 누적 되어야 하나?
+
+3. 간단한 주석으로 "역할" 적어두기
+=> int min = Integer.MAX_VALUE; // 현재 최소 추천 수 저장용
+=> int removeStudent = 0; // 가장 오래된 최소 추천 수 학생
+ */
+/*
+★ picture.remove((Integer) removeStudent);
+
+List.remove()에는 두 가지 오버로딩이 있음
+E remove(int index) // 기본형 => 리스트의 index 번째 요소 제거
+boolean remove(Object o) // ★ 참조형 (Integer) => 리스트에서  O라는 "값" 을 제거
+
+int removeStudent = 2;
+picture.remove(removeStudent); // remove(2) => picture[2]를 삭제
+=> picture 리스트에서 2버 인덱스의 값을 지우게 된다.
+=> 값이 2인 요소를 지우는 게 아님
+
+picture.remove((Integer) removeStudent); // 값이 2인 요소 삭제
+ */
