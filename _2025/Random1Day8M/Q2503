@@ -1,0 +1,102 @@
+// 숫자 야구
+package Random._2025.Random1Day8M;
+
+import java.io.*;
+import java.util.*;
+
+public class Q2503 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        int[] num = new int[n];
+        int[] strike = new int[n];
+        int[] ball = new int[n];
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            num[i] = Integer.parseInt(st.nextToken());
+            strike[i] = Integer.parseInt(st.nextToken());
+            ball[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int count = 0;
+
+        for (int i = 1; i <= 9; i++) {
+            for (int j = 1; j <= 9; j++) {
+                for (int k = 1; k <= 9; k++) {
+                    if (i != j && j != k && k != i) {
+
+                        boolean TF = true;
+                        int[] allNum = {i, j, k};
+                        for (int l = 0; l < n; l++) {
+                            int a = num[l] / 100;
+                            int b = (num[l] / 10) % 10;
+                            int c = num[l] % 10;
+                            int strikeCnt = 0;
+                            int ballCnt = 0;
+
+                            if (allNum[0] == a) strikeCnt++;
+                            if (allNum[1] == b) strikeCnt++;
+                            if (allNum[2] == c) strikeCnt++;
+
+                            if (allNum[1] == a || allNum[2] == a) ballCnt++;
+                            if (allNum[0] == b || allNum[2] == b) ballCnt++;
+                            if (allNum[0] == c || allNum[1] == c) ballCnt++;
+
+                            if (strike[l] != strikeCnt || ball[l] != ballCnt) {
+                                TF = false;
+                            }
+                        }
+
+                        if(TF) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println(count);
+    }
+}
+/* strike: 자리와 숫자가 모두 동일한 경우 / ball: 숫자는 동일하나, 자리는 다를 경우
+4
+num | strike | ball
+123 1 1
+=> 1, 2, 3 중에 1개는 숫자, 위치 모두 동일 1개는 숫자만 맞음(위치 X)
+=> 1고정: 1*2, 13*,
+=> 2고정: 32*, *21,
+=> 3고정: 2*3, *13 이렇게 생각 가능
+
+356 1 0
+=> 3, 5, 6 중에 1개 숫자, 위치 모두 동일
+=> 3**, *5*, **6 이렇게 생각 가능
+
+=> 첫번째 조건과 결합 할 경우 "32*" 이라고 생각 가능
+
+327 2 0 => 3 2확정
+=> 3, 2, 7 중에 2개 숫자, 위치 모두 동일
+=> 32*, 3*7, *27 이렇게 생각 가능
+
+=> 첫번째 두번째 조건과 결합 할 경우 "32*" 이라고 생각 가능
+
+489 0 1
+=> 4, 8, 9 중에 1개 숫자만 맞음(위치 X)
+=> 4가 맞았다고 가정: *4*, **4
+=> 8이 맞았다고 가정: 8**, **8
+=> 9가 맞았다고 가정: 9**, *9* 이렇게 생각 가능
+
+=> 첫번째 두번째 세번째 조건과 결합 할 경우 "324", "328" 두가지 생각 가능
+
+출력 => 2 (324, 328)
+
+ */
+/*
+★ 브루트포스 => 코드로 옮기는 과정
+1. 가능한 모든 조합 만들기
+2. 각 후보에 대해 질문을 모두 검사
+
+브루트 포스로 123 ~ 987 사이의 서로다른 수를 가진 세자리 수를 모두 탐색
+단, 주어진 질문 4가지 경우를 모두 만족하는 수만 count!!
+ */
