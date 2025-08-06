@@ -1,0 +1,129 @@
+// [빡구현 100선] - 4와 7
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Q2877 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int k = Integer.parseInt(br.readLine());
+        int digit = 1;
+        int sumCount = 0;
+        int index = 0;
+        while (true) {
+            if (k > sumCount + (int) Math.pow(2, digit)) {
+                sumCount += (int) Math.pow(2, digit);
+                digit++;
+            } else {
+                break;
+            }
+        }
+
+        index = k - sumCount - 1;
+        int[] temp = new int[digit];
+        String result = "";
+        for (int i = digit - 1; i >= 0; i--) {
+            temp[i] = index % 2;
+            index = index / 2;
+
+        }
+
+        for (int i = 0; i < digit; i++) {
+            if (temp[i] == 0) {
+                result += "4";
+            } else {
+                result += "7";
+            }
+        }
+
+        System.out.println(result);
+    }
+}
+/*
+4와 7로 이루어진 수 중 k 번째 작은 수를 출력
+
+1 => 4
+2 => 7
+한자리 수 => 2^1 = 2 만큼 존재
+
+3 (1+2) => 4 4
+4 (2+2) => 4 7
+
+5 (1+4) => 7 4
+6 (2+4) => 7 7
+두자리 수 => 2^2 = 4 만큼 존재
+
+7 (3+4) => 4 44
+8 (4+4) => 4 47
+9 (5+4) => 4 74
+10(6+4) => 4 77
+
+11 (3+8) => 7 44
+12 (4+8) => 7 47
+13 (5+8) => 7 74
+14 (6+8) => 7 77
+세자리 수 => 2^3 = 8 만큼 존재
+
+15 => 4 444
+16 => 4 447
+17 => 4 474
+18 => 4 477
+19 => 4 744
+20 => 4 747
+21 => 4 774
+22 => 4 777
+
+23 => 7 444
+24 => 7 447
+25 => 7 474
+26 => 7 477
+27 => 7 744
+28 => 7 747
+29 => 7 774
+30 => 7 777
+네자리 수 => 2^4 = 16 만큼 존재
+ */
+/*
+
+1의 자리 수 => 2^1 = 2개 만큼 존재
+2의 자리 수 => 2^2 = 4개 만큼 존재
+3의 자리 수 => 2^3 = 8개 만큼 존재
+4의 자리 수 => 2^4 = 16개 만큼 존재
+
+자리 수 변수 => int digit = 1
+누적 합 변수 => int countSum = 0
+그 자리수 안에서 몇번째 숫자? => int index
+
+Step1. 주어진 K가 몇 자리 수인지 찾기
+Step2. 해당 자리 수에서 K가 몇 번째 수인지 찾기
+Step3. index 를 이진수처럼 보고 4와 7로 전환
+Step4. 이 변환된 숫자들을 문자열로 합쳐서 출력
+
+if)
+Step1.)
+k = 10, 10 > countSum = 2^digit(1) 2
+                            + 2^digit(2) 6
+                             + 2^digit(3)  14 => 만족, k=10는 3의 자리
+Step2.)
+k = 10 3의 자리수에서 몇번째?
+7 8 9 10 => 4번째, index 로 [3]
+index = 10(k) - 6(countSum) - 1
+Step3.)
+3을 이진수로 보고 => 011
+011을 4와 7로 전환 => 477
+Step4.)
+이 변환된 숫자를 문자열로 합쳐서 출력
+
+ */
+/*
+1. 문제를 단계별로 쪼개는 훈련 (Step-by-Step)
+"전체 로직 -> 작은 흐름 -> 한 줄"
+종이에 써가면서 Step 나누는 훈련 반복하기
+
+2. 틀리면 분석하기
+조건 한줄한줄 의심하며 다시 생각하기
+ */
