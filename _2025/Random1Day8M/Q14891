@@ -1,0 +1,176 @@
+// [빡구현 100선] - 톱니바퀴
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14891 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String[] input = new String[4];
+        char[][] wheel = new char[4][8];
+        int[] clock12 = new int[4];
+        for (int i = 0; i < 4; i++) {
+            // N극: 0, S극: 1
+            input[i] = br.readLine();
+
+            for (int j = 0; j < 8; j++) {
+                wheel[i][j] = input[i].charAt(j);
+            }
+        }
+
+        int k = Integer.parseInt(br.readLine());
+        int wheelNum = 0;
+        int direction = 0;
+        for (int i = 0; i < k; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            wheelNum = Integer.parseInt(st.nextToken());
+            direction = Integer.parseInt(st.nextToken());
+            // 시계: 1, 반시계: -1
+
+            int[] dir = new int[4];
+            int wheelNumIndex = wheelNum - 1;
+            dir[wheelNumIndex] = direction;
+
+            // wheelNum 기준 왼쪽 톱니바퀴 판단 
+            for (int j = wheelNumIndex; j >= 1; j--) {
+                char R = wheel[j][(clock12[j] + 6) % 8];
+                char L = wheel[j - 1][(clock12[j - 1] + 2) % 8];
+                if (R == L) {
+                    break;
+                } else {
+                    dir[j - 1] = -dir[j];
+                }
+            }
+            
+            // wheelNum 기준 오른쪽 톱니바퀴 판단
+            for (int j = wheelNumIndex; j <= 2; j++) {
+                char L = wheel[j][(clock12[j] + 2) % 8];
+                char R = wheel[j + 1][(clock12[j + 1] + 6) % 8];
+                if (L == R) {
+                    break;
+                } else {
+                    dir[j + 1] = -dir[j];
+                }
+            }
+
+            for (int j = 0; j < 4; j++) {
+                if (dir[j] == 1) {
+                    // 시계
+                    clock12[j] = (clock12[j] + 7) % 8;
+                } else if (dir[j] == -1) {
+                    // 반시계
+                    clock12[j] = (clock12[j] + 1) % 8;
+                } else if (dir[j] == 0) continue;
+            }
+        }
+
+        int[] score = {1, 2, 4, 8};
+        int sum = 0;
+        for (int j = 0; j < 4; j++) {
+            if (wheel[j][clock12[j]] == '1') {
+                sum += score[j];
+            }
+        }
+
+        System.out.println(sum);
+    }
+}
+/*
+★ 각 wheel 의 3시 방향과 9시방향의 wheel[i](N, S)가 중요
+동일한 wheel[i]이면 움직이지 않음. 그 옆 wheel 도 움직이지 않음.
+
+1번째 시계는 3시방향
+2번째 시계는 9시 , 3시 방향
+3번째 시계도 9시 , 3시 방향
+4번째 시계는 9시 방향
+
+서로 양옆에 마닿는 시계 방향이 같을 경우에는
+=> 움직이지 않음
+서로 양옆에 마닿는 시계 방향이 다를 경우에는
+=> 주어진 x번째 시계가 주어진 direction 으로 움직임
+ */
+/*
+★ 직접 회전 방식 Vs OFFSET 방식 2가지로 모두 복습하기
+★ 직접 다시 짜보고 차이점 확인하기
+// [빡구현 100선] - 톱니바퀴
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14891 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        String[] input = new String[4];
+        char[][] wheel = new char[4][8]; // wheel[i][0]=12시, [2]=3시, [6]=9시 (배열 자체를 회전시켜 유지)
+        for (int i = 0; i < 4; i++) {
+            input[i] = br.readLine();
+            for (int j = 0; j < 8; j++) wheel[i][j] = input[i].charAt(j);
+        }
+
+        int k = Integer.parseInt(br.readLine());
+
+        for (int t = 0; t < k; t++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int wheelNum = Integer.parseInt(st.nextToken());
+            int direction = Integer.parseInt(st.nextToken());
+
+            int[] dir = new int[4];
+            int idx = wheelNum - 1;
+            dir[idx] = direction;
+
+            // 왼쪽 전파
+            for (int j = idx; j >= 1; j--) {
+                if (wheel[j][6] == wheel[j - 1][2]) break;
+                dir[j - 1] = -dir[j];
+            }
+
+            // 오른쪽 전파
+            for (int j = idx; j <= 2; j++) {
+                if (wheel[j][2] == wheel[j + 1][6]) break;
+                dir[j + 1] = -dir[j];
+            }
+
+            // 동시 적용
+            for (int i = 0; i < 4; i++) {
+                if (dir[i] == 1) rotateRight(wheel[i]);
+                else if (dir[i] == -1) rotateLeft(wheel[i]);
+            }
+        }
+
+        // 최종 점수
+        int sum = 0;
+        int[] w = {1, 2, 4, 8};
+        for (int i = 0; i < 4; i++) if (wheel[i][0] == '1') sum += w[i];
+        System.out.println(sum);
+    }
+
+    // 배열을 오른쪽으로 1칸 순환: [a0 a1 ... a6 a7] -> [a7 a0 a1 ... a6]
+    private static void rotateRight(char[] arr) {
+        char last = arr[7];
+        for (int i = 7; i >= 1; i--) {
+            arr[i] = arr[i - 1];
+        }
+        arr[0] = last;
+    }
+
+    // 배열을 왼쪽으로 1칸 순환: [a0 a1 ... a6 a7] -> [a1 a2 ... a7 a0]
+    private static void rotateLeft(char[] arr) {
+        char first = arr[0];
+        for (int i = 0; i < 7; i++) {
+            arr[i] = arr[i + 1];
+        }
+        arr[7] = first;
+    }
+}
+
+ */
