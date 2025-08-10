@@ -1,0 +1,83 @@
+// [빡구현 100선] - 프린터 큐
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
+
+public class Q1966 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int t = Integer.parseInt(br.readLine());
+        for (int i = 0; i < t; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int n = Integer.parseInt(st.nextToken()); // 문서의 갯수
+            int m = Integer.parseInt(st.nextToken());
+            // 몇 번째로 인쇄 되었는지 궁금한 문서가 현재 Q에 몇번째 놓여 있는지
+
+            StringTokenizer st1 = new StringTokenizer(br.readLine());
+            int[] important = new int[n];
+            Queue<Integer> q = new LinkedList<>();
+            for (int j = 0; j < n; j++) {
+                q.add(j); // 0 1 2 3
+                important[j] = Integer.parseInt(st1.nextToken());
+            }
+
+            int count = 0;
+            while (!q.isEmpty()) {
+
+                int max = Integer.MIN_VALUE;
+                for (int j = 0; j < q.size(); j++) {
+                    int index = q.poll(); // 0
+                    max = Math.max(max, important[index]);
+                    q.add(index);
+                }
+
+                int cur = q.poll();
+                if (important[cur] < max) {  // import[0] < max(= import[3])
+                    q.add(cur);
+                } else {
+                    count++;
+                    if (cur == m) {
+                        System.out.println(count);
+                        break;
+                    }
+                }
+
+
+            }
+        }
+
+    }
+}
+/*
+3
+
+1 0 => 문서 갯수, 몇 번째로 인쇄되었는지 궁금한 문서가 현재 q에 0번째로 놓임
+5 => 중요도 5(중요도 그냥 "숫자"가 높을수록 제일 먼저 출력)
+
+4 2 => 문서 갯수, 몇 번째로 인쇄되었는지 궁금한 문서가 현재 q에 2번째로 놓임
+1 2 3 4 => 중요도
+import[0] [1] [2] [3] => 현재 q에 2번째로 놓인 문서의 중요도 = 3
+
+6 0 => 문서 갯수, 몇 번째로 인쇄되었는지 궁금한 문서가 현재 q에 0번째로 놓임
+1 1 9 1 1 1 => 중요도
+[0] [1] [2] [3] [4] [5] => 현재 q에 0번째로 놓인 문서의 중요도 1
+
+반복문을 n만큼 돌면서 q에 중요도를 넣는다.(반복문의 종료조건은 q가 빌때까지)
+
+현재 빠져나올수있는 q값(cur)이(중요도) 나머지 q값 중 최대값 보다 작으면
+꺼내서 다시 넣는다.
+
+현재 빠져나올수있는 q값(cur)이(중요도) 다음에 나올 q값 보다 크면
+꺼내기만 한다. 그리고 count 를 증가시킨다.
+
+그리고 처음 q에 m번째 로 놓인 문서가 몇번째로 count 되었는지 출력
+
+
+ */
