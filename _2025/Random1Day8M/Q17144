@@ -1,0 +1,194 @@
+// [빡구현 100선] - 미세먼지 안녕!
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q17144 {
+
+    static int[] dx = {0, 0, 1, -1};
+    static int[] dy = {1, -1, 0, 0};
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int r = Integer.parseInt(st.nextToken());
+        int c = Integer.parseInt(st.nextToken());
+        int t = Integer.parseInt(st.nextToken());
+        int[][] board = new int[r][c];
+        for (int i = 0; i < r; i++) {
+            StringTokenizer st1 = new StringTokenizer(br.readLine());
+            for (int j = 0; j < c; j++) {
+                board[i][j] = Integer.parseInt(st1.nextToken());
+            }
+        }
+
+        int topCleaned = -1;
+        int bottomCleaned = -1;
+        for (int i = 0; i < r; i++) {
+            if (board[i][0] == -1) {
+                if (topCleaned == -1) topCleaned = i;
+                else bottomCleaned = i;
+            }
+        }
+
+        for (int i = 0; i < t; i++) {
+
+            int[][] temp = new int[r][c];
+            for (int j = 0; j < r; j++) {
+                for (int k = 0; k < c; k++) {
+                    // 1. 미세먼지 확산
+                    if (board[j][k] != -1) {
+                        int dust = board[j][k];
+                        int spreadCnt = 0;
+
+                        for (int dir = 0; dir < 4; dir++) {
+                            int nx = j + dx[dir];
+                            int ny = k + dy[dir];
+
+                            if (nx < 0 || nx >= r || ny < 0 || ny >= c) continue;
+                            if (board[nx][ny] == -1) continue;
+
+                            int addDust = dust / 5;
+                            temp[nx][ny] += addDust;
+                            spreadCnt++;
+                        }
+
+                        temp[j][k] += dust - (dust / 5) * spreadCnt;
+                    }
+                }
+            }
+
+            board = temp;
+
+            board[topCleaned][0] = -1;
+            board[bottomCleaned][0] = -1;
+
+            cleanerTop(c, board, topCleaned);
+            cleanerBottom(c, board, r, bottomCleaned);
+        }
+
+        int count = 0;
+        for (int j = 0; j < r; j++) {
+            for (int k = 0; k < c; k++) {
+                if (board[j][k] > 0) {
+                    count += board[j][k];
+                }
+                // System.out.print(board[j][k] + " ");
+            }
+            // System.out.println("");
+        }
+        System.out.println(count);
+
+
+    }
+
+    // 위쪽 공기청정기는 반시계 방향 작동
+    private static void cleanerTop(int c, int[][] board, int topCleaned) {
+        // 왼쪽줄 아래 이동
+        for (int l = topCleaned - 1; l > 0; l--) {
+            board[l][0] = board[l - 1][0];
+        }
+        /* 틀린 코드
+        for (int l = topCleaned - 1; l >= 0; l--) {
+            board[l + 1][0] = board[l][0];
+            => board[topCleaned][0] = board[topCleaned - 1][0]
+            => -1 고정 자리가 그 위의 먼지(값: 1)로 덮힘
+        }
+        */
+        // 위쪽줄 왼쪽 이동
+        for (int l = 0; l < c - 1; l++) {
+            board[0][l] = board[0][l + 1];
+        }
+        // 오른쪽줄 위쪽 이동
+        for (int l = 0; l < topCleaned; l++) {
+            board[l][c - 1] = board[l + 1][c - 1];
+        }
+        // 아래쪽줄 오른쪽 이동
+        for (int l = c - 1; l > 1; l--) {
+            board[topCleaned][l] = board[topCleaned][l - 1];
+        }
+
+        board[topCleaned][1] = 0;
+    }
+
+    // 아래쪽 공기청정기는 시계 방향 작동
+    private static void cleanerBottom(int c, int[][] board, int r, int bottomCleaned) {
+        // 왼쪽줄 위쪽 이동
+        for (int l = bottomCleaned + 1; l < r - 1; l++) {
+            board[l][0] = board[l + 1][0];
+        }
+        // 아래쪽줄 왼쪽 이동
+        for (int l = 0; l < c - 1; l++) {
+            board[r - 1][l] = board[r - 1][l + 1];
+        }
+        // 오른쪽줄 아래쪽 이동
+        for (int l = r - 1; l > bottomCleaned; l--) {
+            board[l][c - 1] = board[l - 1][c - 1];
+        }
+        // 위쪽줄 오른쪽 이동
+        for (int l = c - 1; l > 1; l--) {
+            board[bottomCleaned][l] = board[bottomCleaned][l - 1];
+        }
+
+        board[bottomCleaned][1] = 0;
+    }
+}
+/*
+★ 도미노 현상 ★
+=> 데이터가 덮어 쓰여 사라지는 것
+
+이를 막기위해
+1.바람의 역순으로 for 문( ->, ↑, ↓, <-) 네 방향의 이동 순서를 어떻게 정할 것인가?
+
+2. for 문 자체의 방향은 어떻게 정할 것인가?
+-> : l-- / l++ ?
+<- : l-- / l++ ?
+↑ : l-- / l++ ?
+↓ : l-- / l++ ?
+ */
+/*
+예제 6 ????? => 왜 72 ?? 가 나오지 ???
+
+입력
+7 8 20
+0 0 0 0 0 0 0 9
+0 0 0 0 3 0 0 8
+-1 0 5 0 0 0 22 0
+-1 8 0 0 0 0 0 0
+0 0 0 0 0 10 43 0
+0 0 5 0 15 0 0 0
+0 0 40 0 0 0 20 0
+
+맞는 코드 board 출력
+0 0 0 0 0 0 0 0
+0 0 2 2 2 3 2 0
+-1 0 0 0 0 0 0 0
+-1 0 0 0 1 0 1 0
+3 5 2 3 1 2 4 1
+2 2 4 4 4 2 4 2
+2 4 0 0 4 0 1 2
+=> 71
+
+틀린 코드 board 출력
+0 0 0 0 0 0 0 0
+0 0 2 2 2 3 2 0
+1 0 0 0 0 0 0 0
+-1 0 0 0 1 0 1 0
+3 5 2 3 1 2 4 1
+2 2 4 4 4 2 4 2
+2 4 0 0 4 0 1 2
+=> 72
+
+틀린 코드
+for (int l = topCleaned - 1; l >= 0; l--) {
+    board[l + 1][0] = board[l][0];
+    => board[topCleaned][0] = board[topCleaned - 1][0]
+    => 19초 경과 후, 20초 시작 직전: 그 위의 먼지(값: 1)
+    => 20초 경과 후,
+    => -1 고정 자리가 그 위의 먼지(값: 1)로 덮힘
+}
+ */
