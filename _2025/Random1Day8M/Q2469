@@ -1,0 +1,141 @@
+// [빡구현 100선] - 사다리 타기
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Q2469 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int k = Integer.parseInt(br.readLine()); // 참가자: A~ J
+        int n = Integer.parseInt(br.readLine()); // 가로줄의 수: 5
+        String str = br.readLine(); // 길이가 K인 사다리 결과 문자열
+
+        char[] beforeChar = new char[k];
+        for (int i = 0; i < k; i++) {
+            beforeChar[i] = (char) (i + 'A');
+        }
+
+        char[] afterChar = new char[k];
+        for (int i = 0; i < str.length(); i++) {
+            afterChar[i] = str.charAt(i);
+        }
+
+        String[] ladder = new String[n];
+        char[][] ladderBoard = new char[n][k-1];
+        int standard = 0;
+        for (int i = 0; i < n; i++) {
+            ladder[i] = br.readLine();
+            if (ladder[i].contains("?")) standard = i;
+            for (int j = 0; j < k - 1; j++) {
+                ladderBoard[i][j] = ladder[i].charAt(j);
+            }
+        }
+
+        char[] downChar = new char[k];
+        for (int i = 0; i < k; i++) {
+            downChar[i] = beforeChar[i];
+        }
+        char[] upChar = new char[k];
+        for (int i = 0; i < k; i++) {
+            upChar[i] = afterChar[i];
+        }
+        char temp;
+        char[] result = new char[k-1];
+        for (int i = 0; i < n; i++) { // 0~ 4. ???????? => 2행
+            if (i < standard) { // 0, 1 행
+                for (int j = 0; j < k - 1; j++) {
+                    if (ladderBoard[i][j] == '-') {
+                        temp = downChar[j];
+                        downChar[j] = downChar[j+1];
+                        downChar[j+1] = temp;
+                    }
+                }
+            }
+        }
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (i > standard) { // 3, 4 행
+                for (int j = 0; j < k - 1; j++) {
+                    if (ladderBoard[i][j] == '-') {
+                        temp = upChar[j];
+                        upChar[j] = upChar[j+1];
+                        upChar[j+1] = temp;
+                    }
+                }
+            }
+        }
+
+        boolean TF = true;
+        for (int i = 0; i < n; i++) {
+            if (i == standard) { // 2행: ????????
+                char downTemp;
+                for (int j = 0; j < k - 1; j++) {
+                    if (downChar[j] == upChar[j]) {
+                        result[j] = '*';
+                    } else {
+                        if (j != 0 && result[j-1] == '-') {
+                            result[j] = '*';
+                        } else {
+                            result[j] = '-';
+                            downTemp = downChar[j];
+                            downChar[j] = downChar[j+1];
+                            downChar[j+1] = downTemp;
+                            if (downChar[j] != upChar[j]) TF = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (TF == false) {
+            for (int i = 0; i < k - 1; i++) {
+                System.out.print("x");
+            }
+        }
+        else {
+            for (int i = 0; i < result.length; i++) {
+                System.out.print(result[i]);
+            }
+        }
+    }
+}
+/*
+아스키 코드
+i = 0 -> (char)(0 + 'A') = (char)(65) = 'A'
+i = 1 -> (char)(1 + 'A') = (char)(66) = 'B'
+i = 2 -> (char)(2 + 'A') = (char)(67) = 'C'
+ */
+/*
+ * 사다리는 연속될 수 없음
+ */
+/*
+브루트 포스 ???
+사다리는 연속될 수 없다. 조건 걸고
+가능한 모든 사다리 경우의 수로 before 에서
+사다리를 모두 타서 after 비교.
+
+시간 초과 가능성? => ㅇㅇ 52억 시간 초과
+
+줄의 길이
+최대 k-1 = 25
+
+가능한 경우의 수
+연속 - 금지 조건 => 약 20만 (Fibonacci(27))
+
+한 경우를 시뮬레이션 비용
+세로줄 n = 1000
+참가자 k = 26
+=> 1000 × 26 = 26,000 연산
+
+전체 연산량
+20만 × 26,000 => 약 5.2 × 10^9
+즉 52억 연산
+
+시간 비교
+자바: 1초 => 대충 1억 연산
+=> 약 52초
+ */
