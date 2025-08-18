@@ -1,0 +1,86 @@
+// 반복 수열
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.StringTokenizer;
+
+public class Q2331 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int a = Integer.parseInt(st.nextToken());
+        int p = Integer.parseInt(st.nextToken());
+
+        int[] dp = new int[10000];
+        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>();
+        // Key: dp[i] , Value: count
+        dp[1] = a;
+        int result = 0;
+        for (int i = 1; i < dp.length - 1; i++) {
+            if (map.containsKey(dp[i])) {
+                map.put(dp[i], map.get(dp[i]) + 1);
+            } else {
+                map.put(dp[i], 1);
+            }
+
+            int curNum = dp[i];
+            int nextNum = 0;
+            while (curNum > 0) {
+                nextNum += (int) Math.pow((curNum % 10), p);
+                curNum = curNum / 10;
+            }
+            dp[i+1] = nextNum;
+
+            if (map.get(dp[i]) == 2) {
+                for (int j = 0; j < i; j++) {
+                    if (dp[i] == dp[j]) {
+                        System.out.println(j-1);
+                    }
+                }
+                break;
+            }
+        }
+
+    }
+}
+/*
+접근
+d[1] = A
+d[n] = d[n-1]의 각 자리의 숫자를 p번 곱한 수 들의 합
+d[n] = (d[n-1] / 10)^2 + (d[n-1] % 10)^2
+
+A = 57, p = 2
+d[1] = 57 -count[57]:1
+d[2] = 5^2 + 7^2 = 25 + 49 = 74 -count[74]:1
+d[3] = 7^2 + 4^2 = 49 + 16 = 65 -count[65]:1
+d[4] = 6^2 + 5^2 = 36 + 25 = 61 -count[61]:1
+
+★ d[5] = 6^2 + 1^2 = 36 + 1 = 37 -count[37]:1
+d[6] = 3^2 + 7^2 = 9 + 49 = 58 -count[58]:2
+
+...89, 145, 42, 20, 4, 16 -count[dp[i]]~ count[dp[i]]:1
+...
+...
+
+★ d[13] = 6^2 + 1^2 = 36 + 1 = 37 -count[37]:2
+d[14] = 3^2 + 7^2 = 9 + 49 = 58 -count[58]:2
+ */
+/*
+Math.pow(2, 3) = 8
+ */
+/*
+★ Review ★
+내가 왜 HashMap 을 썻는지(처음엔 배열쓰다가..?)
+
+curNum, nextNum 과 같은 임시 변수를 왜 선언했는지?
+
+마지막에 실수한 부분이 실수가 맞는지?
+
+더 효율적인 코드 찾아보기!
+ */
