@@ -1,0 +1,207 @@
+// [빡구현 100선] - 경사로
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Q14890 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int l = Integer.parseInt(st.nextToken());
+
+        int[][] board = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st1 = new StringTokenizer(br.readLine());
+            for (int j = 0; j < n; j++) {
+                board[i][j] = Integer.parseInt(st1.nextToken());
+            }
+        }
+
+        int result = 0;
+
+        // 가로줄 탐색
+        for (int i = 0; i < n; i++) {
+            int flatLoad = 1;
+            boolean[] placed = new boolean[n];
+            boolean TF = true;
+            for (int j = 0; j < n - 1; j++) {
+                // [내리막길: 미래] 1만큼 작아야 하고, l 이상 연속된 같은 수
+                if (board[i][j] > board[i][j+1] && board[i][j] - board[i][j+1] == 1) {
+                    // 경사로를 놓을 수 있어?, 놓을 수 있다면...
+                    for (int k = 1; k <= l; k++) {
+                        if (j + k >= n || placed[j+k] || board[i][j+1] != board[i][j+k]) {
+                            TF = false;
+                            break;
+                        }
+                    }
+
+                    if (TF) {
+                        flatLoad = 1;
+                        for (int k = 1; k <= l; k++) {
+                            placed[j+k] = true;
+                        }
+                    } else {
+                        TF = false;
+                        break;
+                    }
+
+                // [평지] 항상 ok.
+                } else if (board[i][j] == board[i][j+1]) {
+                    flatLoad++;
+
+                // [오르막길: 과거] 1만큼 커야 하고, l 이상 연속된 같은 수
+                } else if (board[i][j] < board[i][j+1] && board[i][j+1] - board[i][j] == 1) {
+                    // 경사로를 놓을 수 있어?, 놓을 수 있다면...
+                    if (flatLoad >= l) {
+                        for (int k = 0; k < l; k++) {
+                            if (j - k < 0 || placed[j-k]) {
+                                TF = false;
+                                break;
+                            }
+                        }
+
+                        if (TF) {
+                            flatLoad = 1;
+                            for (int k = 0; k < l; k++) {
+                                placed[j-k] = true;
+                            }
+                        } else {
+                            TF = false;
+                            break;
+                        }
+
+                    } else {
+                        TF = false;
+                        break;
+                    }
+
+                } else {
+                    TF = false;
+                    break;
+                }
+            }
+
+            if (TF) {
+                result++;
+            }
+        }
+
+        // 세로줄 탐색
+        for (int j = 0; j < n; j++) {
+            int flatLoad = 1;
+            boolean[] placed = new boolean[n];
+            boolean TF = true;
+            for (int i = 0; i < n - 1; i++) {
+                if (board[i][j] > board[i+1][j] && board[i][j] - board[i+1][j] == 1) {
+                    for (int k = 1; k <= l; k++) {
+                        if (i + k >= n || placed[i+k] || board[i+1][j] != board[i+k][j]) {
+                            TF = false;
+                            break;
+                        }
+                    }
+
+                    if (TF) {
+                        flatLoad = 1;
+                        for (int k = 1; k <= l; k++) {
+                            placed[i+k] = true;
+                        }
+                    } else {
+                        TF = false;
+                        break;
+                    }
+
+                } else if (board[i][j] == board[i+1][j]) {
+                    flatLoad++;
+                } else if (board[i][j] < board[i+1][j] && board[i+1][j] - board[i][j] == 1) {
+                    if (flatLoad >= l) {
+                        for (int k = 0; k < l; k++) {
+                            if (i - k < 0 || placed[i-k]) {
+                                TF = false;
+                                break;
+                            }
+                        }
+
+                        if (TF) {
+                            flatLoad = 1;
+                            for (int k = 0; k < l; k++) {
+                                placed[i-k] = true;
+                            }
+                        } else {
+                            TF = false;
+                            break;
+                        }
+
+                    } else {
+                        TF = false;
+                        break;
+                    }
+
+                } else {
+                    TF = false;
+                    break;
+                }
+            }
+
+            if (TF) {
+                result++;
+            }
+        }
+
+        System.out.println(result);
+    }
+}
+/*
+길을 지나가기 위한 조건
+
+1. 모든 칸의 높이가 모두 같아야 한다.
+2. 경사로 조건
+2-1. 경사로는 낮은 칸에 놓으며, l개의 연속된 칸에 경사로 바닥이 모두 접
+2-2. 낮은 칸과 높은 칸의 높이 차이는 1
+2-3. 경사로를 놓을 낮은 칸의 높이는 모두 같아야 하고, l개의 칸이 연속
+
+3. 경사로 조건 아닌 경우
+3-1. 경사로를 놓은 곳에 또 경사로를 놓는 경우
+3-2. 낮은 칸과 높은 칸의 높이 차이가 1이 아닌 경우(<-> 2-2.)
+3-3. 낮은 지점의 칸의 높이가 모두 같지 않거나, l개가 연속되지 않은 경우(<-> 2-3.)
+3-4. 경사로를 놓다가 범위를 벗아나는 경우
+
+ */
+/*
+n = 6 이면 탐색해야 할 길은 총 2 * n = 12
+l => 경사로의 길이 , 경사로의 높이는 항상 1
+
+ */
+/*
+1. 가로줄 탐색 Vs 2. 세로줄 탐색
+
+1.
+// 바깥쪽 루프가 행(i= 0, 1, 2) 선택하고 고정
+for (int i = 0; i < 3; i++) {
+    // 안쪽 루프가 선택된 행 안에서 열(j) 이동
+    for (int j = 0; j < 3; j++) {
+        // board[i][j] 탐색
+    }
+}
+
+2.
+// 바깥쪽 루프가 열(j= 0, 1, 2) 선택하고 고정
+for (int j = 0; j < 3; j++) {
+    // 안쪽 루프가 선택된 열 안에서 행(i) 이동
+    for (int i = 0; i < 3; i++) {
+        // board[i][j] 탐색
+    }
+}
+ */
+/*
+● ● ● ○ ○
+복습
+=> 그림 그리면서 논리적으로 하나씩  
+=> for문 k 범위
+=> TF 변경 유의
+ */
