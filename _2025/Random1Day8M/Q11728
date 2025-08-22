@@ -1,0 +1,84 @@
+// 배열 합치기
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Q11728 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken()); // 배열 a의 크기 n
+        int m = Integer.parseInt(st.nextToken()); // 배열 b의 크기 m
+
+        int[] a = new int[n]; // a[0] = 3, a[1] = 5
+        StringTokenizer st1 = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) {
+            a[i] = Integer.parseInt(st1.nextToken());
+        }
+
+        int[] b = new int[m]; // b[0] = 2, b[1] = 9
+        StringTokenizer st2 = new StringTokenizer(br.readLine());
+        for (int i = 0; i < m; i++) {
+            b[i] = Integer.parseInt(st2.nextToken());
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int pointerA = 0;
+        int pointerB = 0;
+        while (pointerA < a.length && pointerB < b.length) {
+            if (a[pointerA] <= b[pointerB]) {
+                sb.append(a[pointerA] + " ");
+                pointerA++;
+            } else {
+                sb.append(b[pointerB] + " ");
+                pointerB++;
+            }
+        }
+
+        // 남은 요소 있을 경우
+        // 각각의 배열은 이미 정렬된 상태이기 때문에 추가로 그냥 넣으면 됨.
+        while (pointerA < a.length) {
+            sb.append(a[pointerA] + " ");
+            pointerA++;
+        }
+
+        while (pointerB < b.length) {
+            sb.append(b[pointerB] + " ");
+            pointerB++;
+        }
+
+        System.out.print(sb);
+    }
+}
+/*
+Arrays.sort 시간복잡도 (합치고 정렬)
+
+시간 복잡도: O((N+M) log (N+M))
+
+최악의 경우 계산:
+N과 M이 각각 최대 100만이라고 가정하면, N+M = 200만
+계산식: 200만 * log₂(200만)
+log₂(200만)은 약 21
+
+총 연산 횟수: 200만 * 21 = 약 4,200만 번
+문제점: 연산 횟수가 수천만에 달해 1.5초의 시간 제한 통과 X
+"이미 정렬되어 있다." 는 중요한 힌트를 놓치고, 처음부터 다시 정렬함.
+ */
+/*
+투 포인터
+
+시간 복잡도: O(N+M)
+
+최악의 경우 계산:
+N과 M이 각각 최대 100만이라고 가정하면, N+M = 200만
+
+총 연산 횟수: 약 200만 번
+핵심: 이 방법은 "이미 정렬되어 있다" 는 힌트를 적극적으로 활용하여
+두 배열을 딱 한 번만 훑는다. 연산 횟수가 20배 이상 차이 나므로 시간 안에 충분히 통과
+ */
