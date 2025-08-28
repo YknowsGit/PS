@@ -1,0 +1,193 @@
+// 좌표 정렬하기
+package Random._2025.Random1Day8M;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.StringTokenizer;
+
+public class Q11650 {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        int[][] board = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            board[i][0] = Integer.parseInt(st.nextToken()); // x
+            board[i][1] = Integer.parseInt(st.nextToken()); // y
+        }
+
+        Arrays.sort(board, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] a, int[] b) {
+                if (a[0] == b[0]) {
+                    // x 좌표가 같으면,
+                    return a[1] - b[1];
+                } else {
+                    // x 좌표가 다르면,
+                    return a[0] - b[0];
+                }
+            }
+        });
+
+        for (int i = 0; i < n; i++) {
+            System.out.println(board[i][0] + " " + board[i][1]);
+        }
+
+    }
+}
+// 리그식 풀이 이중 for 문 돌면서 각 자리 찾아가기 + swap
+// => 시간 초과
+/*
+public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(br.readLine());
+        int[] x = new int[n];
+        int[] y = new int[n];
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            x[i] = Integer.parseInt(st.nextToken());
+            y[i] = Integer.parseInt(st.nextToken());
+        }
+
+        int[] tempX = new int[n];
+        int[] tempY = new int[n];
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (x[i] > x[j]) {
+                    tempX[i] = x[j];
+                    x[j] = x[i];
+                    x[i] = tempX[i];
+
+                    tempY[i] = y[j];
+                    y[j] = y[i];
+                    y[i] = tempY[i];
+                } else if (x[i] == x[j]) {
+                    if (y[i] > y[j]) {
+                        tempX[i] = x[j];
+                        x[j] = x[i];
+                        x[i] = tempX[i];
+
+                        tempY[i] = y[j];
+                        y[j] = y[i];
+                        y[i] = tempY[i];
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            System.out.println(x[i] + " " + y[i]);
+        }
+
+    }
+ */
+/*
+위 풀이는 선택 정렬과 버블 정렬의 핵심 원리 포함
+선택 Vs 버블
+특징     	선택 정렬 (Selection Sort)	 | 버블 정렬 (Bubble Sort)
+목표	        최적의 값을 찾아서 제자리에 넣기	 | 이웃과 비교해서 큰 값을 뒤로 보내기
+교환 횟수	라운드당 최대 1번 (매우 적음)	 | 조건이 맞을 때마다 수시로 발생 (많을 수 있음)
+비교 방식	하나의 기준(i)과 나머지 전체(j)  |	인접한 이웃(j 와 j+1)만 계속 비교
+ */
+/*
+★ 선택 정렬
+public class SortExamples {
+    public static void selectionSort(int[] arr) {
+        // 1. 바깥쪽 반복문: 정렬될 위치(i)를 선택합니다.
+        for (int i = 0; i < arr.length - 1; i++) {
+            int minIndex = i; // 현재 위치를 일단 최솟값의 위치라고 가정합니다.
+
+            // 2. 안쪽 반복문: i의 다음 위치부터 끝까지 탐색하며 진짜 최솟값을 찾습니다.
+            for (int j = i + 1; j < arr.length; j++) {
+                // 더 작은 값을 발견하면, 최솟값의 위치(minIndex)를 업데이트합니다.
+                if (arr[j] < arr[minIndex]) {
+                    minIndex = j;
+                }
+            }
+
+            // 3. 찾은 최솟값(arr[minIndex])과 현재 위치(arr[i])의 값을 교환합니다.
+            int temp = arr[i];
+            arr[i] = arr[minIndex];
+            arr[minIndex] = temp;
+        }
+    }
+}
+ */
+/*
+★ 버블 정렬
+public class SortExamples {
+    public static void bubbleSort(int[] arr) {
+        // 1. 바깥쪽 반복문: 총 정렬 횟수(라운드)를 결정합니다.
+        for (int i = 0; i < arr.length - 1; i++) {
+
+            // 2. 안쪽 반복문: 이웃한 두 값을 계속 비교하며 교환합니다.
+            for (int j = 0; j < arr.length - 1 - i; j++) {
+                // 왼쪽 값이 오른쪽 값보다 크면 자리를 바꿉니다.
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+            // 안쪽 반복문이 한 번 끝나면 가장 큰 값이 맨 뒤로 이동합니다.
+        }
+    }
+}
+ */
+
+// ★ 다른 풀이 Comparator 의 compare 메서드 활용해서 다른 풀이 복습
+/*
+import java.io.*;
+import java.util.*;
+
+public class Q11650_NoLambda {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+
+        int[][] coords = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            coords[i][0] = Integer.parseInt(st.nextToken());
+            coords[i][1] = Integer.parseInt(st.nextToken());
+        }
+
+        // Arrays.sort에 Comparator라는 '정렬 설명서'를 직접 만들어서 전달
+        Arrays.sort(coords, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] a, int[] b) {
+                // a: 비교 대상 1 (예: coords[i])
+                // b: 비교 대상 2 (예: coords[j])
+
+                // 1. x좌표(a[0], b[0])를 먼저 비교합니다.
+                if (a[0] == b[0]) {
+                    // x좌표가 같다면, y좌표(a[1], b[1])를 비교해서 순서를 결정합니다.
+                    // a[1]이 더 작으면 음수가 되어 a가 앞으로 갑니다. (오름차순)
+                    return a[1] - b[1];
+                }
+                else {
+                    // x좌표가 다르다면, x좌표를 비교해서 순서를 결정합니다.
+                    // a[0]이 더 작으면 음수가 되어 a가 앞으로 갑니다. (오름차순)
+                    return a[0] - b[0];
+                }
+            }
+        });
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append(coords[i][0]).append(" ").append(coords[i][1]).append("\n");
+        }
+        System.out.print(sb);
+    }
+}
+ */
+/*
+Comparable Vs Comparator 차이점 구분하기
+ */
